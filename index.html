@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Web Calendar</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="wrap">
+    <div class="auth-card">
+      <div class="auth-head">
+        <h2>로그인</h2>
+        <button id="themeToggle" class="chip" type="button" aria-label="테마 전환">🌙 다크</button>
+      </div>
+
+      <div class="row">
+        <input id="email" type="email" placeholder="이메일" autocomplete="username" />
+      </div>
+      <div class="row">
+        <input id="password" type="password" placeholder="비밀번호" autocomplete="current-password" />
+      </div>
+
+      <div class="row btns">
+        <button id="signup">회원가입</button>
+        <button id="login">로그인</button>
+        <button id="logout" class="secondary" disabled>로그아웃</button>
+      </div>
+
+      <div class="row btns">
+        <button id="exportJson" class="secondary" disabled>JSON 내보내기</button>
+        <label class="file-btn disabled">
+          JSON 가져오기
+          <input id="importJson" type="file" accept="application/json" disabled />
+        </label>
+      </div>
+
+      <div class="row btns">
+        <button id="serverBackup" class="secondary" disabled>서버로 백업</button>
+        <button id="serverSync" class="secondary" disabled>서버에서 불러오기</button>
+      </div>
+
+      <div class="row btns">
+        <button id="resetLocal" class="secondary" disabled>로컬 초기화</button>
+      </div>
+
+      <div id="authStatus" class="status">로그인 상태: ❌ 로그아웃</div>
+      <div class="mini">
+        * 7단계 A-3: 덮어쓰기/병합 전에 스냅샷 저장 → 되돌리기(Undo) 지원
+      </div>
+    </div>
+
+    <div class="calendar">
+      <div class="header">
+        <button id="prev" aria-label="이전 달">◀</button>
+        <h1 id="title"></h1>
+        <button id="next" aria-label="다음 달">▶</button>
+      </div>
+
+      <!-- ✅ Quick Add (헤더 밖이 정답) -->
+      <div class="quickadd">
+        <input
+          id="quickAddInput"
+          type="text"
+          placeholder='빠른 추가 예) 1/20 19:00 헬스  |  2026-01-20 19:00 약속'
+        />
+        <button id="quickAddBtn" class="primary" type="button">추가</button>
+      </div>
+      <div class="mini" style="margin-top:8px;">
+        입력 예시:
+        <b>1/20 19:00 헬스</b> /
+        <b>1/20 헬스</b> /
+        <b>2026-01-20 19:00 약속</b>
+      </div>
+
+      <div class="days">
+        <div class="day sun">일</div>
+        <div class="day">월</div>
+        <div class="day">화</div>
+        <div class="day">수</div>
+        <div class="day">목</div>
+        <div class="day">금</div>
+        <div class="day sat">토</div>
+      </div>
+
+      <div class="dates" id="dates"></div>
+
+      <div class="hint">
+        ✅ 날짜 클릭 → 모달에서 일정 추가/삭제<br/>
+        ✅ 서버 불러오기 → 병합/덮어쓰기 선택 가능<br/>
+        ✅ 실수했으면 동기화 모달에서 Undo 가능(최근 1회)
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">이번 달 일정</div>
+
+          <div class="panel-controls">
+            <input id="monthSearch" class="panel-input" type="text" placeholder="검색 (예: 헬스, 약속)" />
+            <select id="monthFilter" class="panel-select">
+              <option value="all">전체 색상</option>
+              <option value="red">빨강</option>
+              <option value="yellow">노랑</option>
+              <option value="green">초록</option>
+              <option value="blue">파랑</option>
+              <option value="purple">보라</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="panel-sub" id="monthCount">로그인 후 확인 가능</div>
+        <div class="panel-list" id="monthList"></div>
+        <div class="panel-empty" id="monthEmpty">이번 달 일정이 없어요.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ✅ 일정 모달 -->
+  <div class="modal-backdrop" id="modalBackdrop" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-head">
+        <div class="modal-title-wrap">
+          <div class="modal-title" id="modalTitle">일정 관리</div>
+          <div class="modal-sub" id="modalSub">선택 날짜</div>
+        </div>
+        <button class="icon-btn" id="modalClose" aria-label="닫기">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="section">
+          <div class="section-title">일정 추가</div>
+
+          <div class="form-row">
+            <label class="label">내용</label>
+            <input id="scheduleText" type="text" placeholder="예) 헬스 / 약속 / 공부" maxlength="30"/>
+          </div>
+
+          <div class="form-row">
+            <label class="label">색상</label>
+            <div class="color-palette" id="colorPalette"></div>
+          </div>
+
+          <button id="addScheduleBtn" class="primary">추가</button>
+        </div>
+
+        <div class="section">
+          <div class="section-title">이날 일정</div>
+          <div class="list" id="scheduleList"></div>
+          <div class="empty" id="emptyText">아직 일정이 없어요.</div>
+        </div>
+      </div>
+
+      <div class="modal-foot">
+        <button id="modalCancel" class="secondary">닫기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ✅ 7단계 A-3: 동기화 선택 모달(Undo 포함) -->
+  <div class="modal-backdrop" id="syncBackdrop" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="syncTitle">
+      <div class="modal-head">
+        <div class="modal-title-wrap">
+          <div class="modal-title" id="syncTitle">서버 동기화 방식 선택</div>
+          <div class="modal-sub" id="syncSub">서버에서 불러오기</div>
+        </div>
+        <button class="icon-btn" id="syncClose" aria-label="닫기">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="section">
+          <div class="section-title">현재 상태</div>
+          <div class="sync-stats" id="syncStats">로컬: -개 / 서버: -개</div>
+
+          <div class="sync-row">
+            <button id="syncUndo" class="secondary" disabled>되돌리기(Undo)</button>
+            <div class="mini" id="undoHint" style="margin-top:0;">스냅샷이 없어요.</div>
+          </div>
+
+          <div class="mini" style="margin-top:8px;">
+            병합은 안전하지만, “덮어쓰기”는 되돌리기 어려워요 → Undo로 1회 복구 가능
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">동기화 방식</div>
+
+          <button id="syncMerge" class="primary">병합 (추천)</button>
+          <div class="mini" style="margin-top:6px;">로컬 + 서버 데이터를 합쳐요 (id 기준)</div>
+
+          <div style="height:10px;"></div>
+
+          <button id="syncReplaceLocal" class="secondary">서버로 덮어쓰기</button>
+          <div class="mini" style="margin-top:6px;">로컬 데이터를 서버 데이터로 교체해요</div>
+
+          <div style="height:10px;"></div>
+
+          <button id="syncReplaceServer" class="secondary">로컬을 서버로 덮어쓰기</button>
+          <div class="mini" style="margin-top:6px;">서버 데이터를 현재 로컬 데이터로 교체해요</div>
+        </div>
+      </div>
+
+      <div class="modal-foot">
+        <button id="syncCancel" class="secondary">닫기</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

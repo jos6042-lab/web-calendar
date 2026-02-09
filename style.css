@@ -1,0 +1,593 @@
+:root{
+  --bg:#f4f5f7;
+  --card:#ffffff;
+  --text:#111;
+  --muted:#666;
+  --line:#e6e6e6;
+  --shadow:0 6px 18px rgba(0,0,0,.06);
+  --radius:16px;
+
+  --panel:#fafafa;
+  --chip:#f2f3f5;
+
+  --sun-bg:#fff7f7;
+  --sat-bg:#f3f8ff;
+  --status:#f7f7f7;
+}
+
+html[data-theme="dark"]{
+  --bg:#0f1115;
+  --card:#151821;
+  --text:#e8eaf0;
+  --muted:#a8afbf;
+  --line:#252a36;
+  --shadow:0 10px 28px rgba(0,0,0,.35);
+
+  --panel:#11141b;
+  --chip:#1d2230;
+
+  --sun-bg:#1b1416;
+  --sat-bg:#131a23;
+  --status:#11141b;
+}
+
+*{ box-sizing:border-box; }
+body{
+  margin:0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans KR", sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+
+.wrap{
+  max-width: 980px;
+  margin: 40px auto;
+  padding: 0 16px;
+  display:flex;
+  gap:16px;
+  align-items:flex-start;
+  justify-content:center;
+  flex-wrap:wrap;
+}
+
+.auth-card, .calendar{
+  background:var(--card);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  border:1px solid var(--line);
+}
+
+.auth-card{
+  width:320px;
+  padding:18px;
+}
+
+.auth-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:14px;
+}
+.auth-card h2{
+  margin:0;
+  font-size:20px;
+}
+.chip{
+  padding:8px 10px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  background:var(--chip);
+  color:var(--text);
+  cursor:pointer;
+  font-weight:800;
+  white-space:nowrap;
+}
+
+.row{ margin-bottom:10px; }
+input{
+  width:100%;
+  padding:12px 12px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  outline:none;
+  background:transparent;
+  color:var(--text);
+}
+input::placeholder{
+  color: color-mix(in oklab, var(--muted) 80%, transparent);
+}
+input:focus{
+  border-color:#b7c6ff;
+  box-shadow:0 0 0 3px rgba(120,140,255,.15);
+}
+
+.btns{
+  display:flex;
+  gap:8px;
+}
+button{
+  flex:1;
+  padding:10px 10px;
+  border-radius:12px;
+  border:1px solid var(--line);
+  background:#111;
+  color:#fff;
+  cursor:pointer;
+  font-weight:600;
+}
+html[data-theme="dark"] button{
+  background:#0e1117;
+  color:#fff;
+}
+button.secondary{
+  background:transparent;
+  color:var(--text);
+}
+button.primary{
+  background:#111;
+  color:#fff;
+}
+button:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+}
+
+.status{
+  margin-top:10px;
+  padding:10px 12px;
+  background:var(--status);
+  border:1px solid var(--line);
+  border-radius:12px;
+  font-size:13px;
+}
+.mini{
+  margin-top:10px;
+  font-size:12px;
+  color:var(--muted);
+  line-height:1.35;
+}
+
+.calendar{
+  width: 520px;
+  padding: 18px;
+}
+
+.header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:10px;
+}
+.header h1{
+  margin:0;
+  font-size:28px;
+  font-weight:800;
+}
+.header button{
+  max-width: 90px;
+  background:transparent;
+  color:var(--text);
+}
+
+/* ✅ Quick Add */
+.quickadd{
+  display:flex;
+  gap:8px;
+  align-items:center;
+  margin-top:10px;
+}
+.quickadd input{
+  flex:1;
+}
+.quickadd button{
+  max-width:110px;
+}
+
+.days{
+  display:grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap:6px;
+  margin: 10px 0 8px;
+  font-weight:700;
+  color:var(--text);
+}
+.day{
+  text-align:center;
+  padding:6px 0;
+  border-radius:10px;
+}
+.day.sun{ color:#e53935; }
+.day.sat{ color:#1e88e5; }
+
+.dates{
+  display:grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap:6px;
+}
+
+.date{
+  position:relative;
+  min-height:64px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:8px 8px 6px;
+  cursor:pointer;
+  background:transparent;
+  overflow:hidden;
+}
+.date:hover{
+  box-shadow:0 3px 10px rgba(0,0,0,.05);
+}
+.date-number{
+  font-size:13px;
+  font-weight:800;
+}
+
+.date.sun{ background:var(--sun-bg); }
+.date.sat{ background:var(--sat-bg); }
+
+.date.today{
+  outline: 2px solid rgba(255, 193, 7, .75);
+  outline-offset: 1px;
+}
+.date.selected{
+  outline: 2px solid rgba(30,136,229,.55);
+  outline-offset: 1px;
+}
+
+.dots{
+  position:absolute;
+  left:8px;
+  right:8px;
+  bottom:7px;
+  display:flex;
+  gap:4px;
+  align-items:center;
+  flex-wrap:nowrap;
+  overflow:hidden;
+}
+/* ✅ 시간 일정 bar 표시 */
+.bars{
+  margin-top:6px;
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+.bar{
+  height:6px;
+  border-radius:999px;
+  width:100%;
+  opacity:.95;
+  border:1px solid rgba(0,0,0,.10);
+}
+html[data-theme="dark"] .bar{
+  border:1px solid rgba(255,255,255,.12);
+}
+
+.dot{
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  flex:0 0 auto;
+  border:1px solid rgba(0,0,0,.12);
+}
+html[data-theme="dark"] .dot{
+  border:1px solid rgba(255,255,255,.15);
+}
+.more{
+  font-size:11px;
+  color:var(--muted);
+  margin-left:2px;
+}
+
+.hint{
+  margin-top:12px;
+  color:#2e7d32;
+  font-size:12px;
+  line-height:1.4;
+}
+
+/* ============ 5단계: 월 일정 패널 ============ */
+.panel{
+  margin-top:14px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:var(--panel);
+  padding:12px;
+}
+.panel-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:10px;
+}
+.panel-title{
+  font-weight:900;
+  font-size:14px;
+  white-space:nowrap;
+}
+.panel-controls{
+  display:flex;
+  gap:8px;
+  align-items:center;
+  justify-content:flex-end;
+  flex-wrap:wrap;
+}
+.panel-input{
+  width:220px;
+  max-width:100%;
+  padding:10px 10px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  outline:none;
+  background:transparent;
+  color:var(--text);
+  font-size:13px;
+}
+.panel-select{
+  padding:10px 10px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:transparent;
+  color:var(--text);
+  font-size:13px;
+  cursor:pointer;
+}
+.panel-sub{
+  margin-top:8px;
+  font-size:12px;
+  color:var(--muted);
+}
+.panel-list{
+  margin-top:10px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  max-height: 260px;
+  overflow:auto;
+  padding-right:4px;
+}
+.panel-item{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:10px;
+  cursor:pointer;
+}
+.panel-left{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-width:0;
+}
+.badge-date{
+  font-size:12px;
+  font-weight:800;
+  color:var(--text);
+  background:var(--status);
+  border:1px solid var(--line);
+  padding:6px 8px;
+  border-radius:10px;
+  white-space:nowrap;
+}
+.panel-text{
+  font-size:13px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  max-width:220px;
+}
+.panel-del{
+  padding:8px 10px;
+  border-radius:10px;
+  border:1px solid var(--line);
+  background:transparent;
+  color:var(--text);
+  cursor:pointer;
+  font-weight:800;
+}
+.panel-empty{
+  margin-top:10px;
+  font-size:12px;
+  color:var(--muted);
+  display:none;
+}
+
+/* ============ MODAL ============ */
+.modal-backdrop{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.45);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:16px;
+  z-index:999;
+}
+.modal-backdrop.show{ display:flex; }
+
+.modal{
+  width:420px;
+  max-width:100%;
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:18px;
+  box-shadow:0 18px 48px rgba(0,0,0,.18);
+  overflow:hidden;
+}
+
+.modal-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:14px 14px;
+  border-bottom:1px solid var(--line);
+}
+.modal-title{
+  font-weight:900;
+  font-size:16px;
+}
+.modal-sub{
+  font-size:12px;
+  color:var(--muted);
+  margin-top:2px;
+}
+.icon-btn{
+  width:38px;
+  height:38px;
+  border-radius:12px;
+  border:1px solid var(--line);
+  background:transparent;
+  color:var(--text);
+  cursor:pointer;
+  font-weight:900;
+}
+
+.modal-body{
+  padding:14px;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+.section{
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:12px;
+  background:var(--panel);
+}
+.section-title{
+  font-weight:900;
+  margin-bottom:10px;
+}
+
+.form-row{ display:flex; flex-direction:column; gap:6px; margin-bottom:10px; }
+.label{ font-size:12px; color:var(--muted); }
+
+.color-palette{
+  display:flex;
+  gap:10px;
+  align-items:center;
+}
+.color-chip{
+  width:18px;
+  height:18px;
+  border-radius:50%;
+  border:2px solid rgba(0,0,0,.10);
+  cursor:pointer;
+}
+html[data-theme="dark"] .color-chip{
+  border:2px solid rgba(255,255,255,.12);
+}
+.color-chip.selected{
+  outline:3px solid rgba(30,136,229,.35);
+  outline-offset:2px;
+}
+
+.list{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.item{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:10px;
+}
+.item-left{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-width:0;
+}
+.item-text{
+  font-size:13px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  max-width:240px;
+}
+.item-del{
+  padding:8px 10px;
+  border-radius:10px;
+  border:1px solid var(--line);
+  background:transparent;
+  color:var(--text);
+  cursor:pointer;
+  font-weight:800;
+}
+.empty{
+  font-size:12px;
+  color:var(--muted);
+  display:none;
+}
+
+.modal-foot{
+  padding:14px;
+  border-top:1px solid var(--line);
+  display:flex;
+  justify-content:flex-end;
+  gap:10px;
+}
+
+/* ✅ JSON 가져오기 라벨 버튼 */
+.file-btn{
+  flex:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:10px 10px;
+  border-radius:12px;
+  border:1px solid var(--line);
+  background:transparent;
+  color:var(--text);
+  cursor:pointer;
+  font-weight:700;
+  position:relative;
+  overflow:hidden;
+  user-select:none;
+}
+.file-btn input{
+  position:absolute;
+  inset:0;
+  opacity:0;
+  cursor:pointer;
+}
+.file-btn.disabled{
+  opacity:.45;
+  cursor:not-allowed;
+}
+
+/* ✅ 7단계 A: 동기화 상태 표시 */
+.sync-stats{
+  margin-top:6px;
+  padding:10px 12px;
+  background:var(--status);
+  border:1px solid var(--line);
+  border-radius:12px;
+  font-size:13px;
+  font-weight:800;
+  color:var(--text);
+}
+
+/* ✅ 7단계 A-3: Undo 줄 */
+.sync-row{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-top:10px;
+}
+.sync-row .mini{
+  margin:0;
+  flex:1;
+}
